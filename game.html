@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3edf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#211f26" media="(prefers-color-scheme: dark)">
+  <title>블록 쌓기 — 플레이</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="game-page">
+  <header class="top-app-bar">
+    <div class="brand">
+      <a class="icon-btn" href="index.html" aria-label="처음 화면으로" title="처음 화면으로">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </a>
+      <h1 class="title-large">블록 쌓기</h1>
+    </div>
+    <div class="actions">
+      <button id="music-btn" class="icon-btn" type="button" aria-pressed="true" aria-label="배경음악" title="배경음악 켜기/끄기 (M)">
+        <svg class="icon icon-music-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+        <svg class="icon icon-music-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.27 3 3 4.27l9 9v.28c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4v-1.73L19.73 21 21 19.73 4.27 3zM14 7h4V3h-6v5.18l2 2z"/></svg>
+      </button>
+      <button id="pause-btn" class="icon-btn" type="button" aria-label="일시정지" title="일시정지 (P)" disabled>
+        <svg class="icon icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        <svg class="icon icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="board-card">
+      <div class="board-wrap">
+        <canvas id="board" width="300" height="600"></canvas>
+        <div id="overlay" class="scrim">
+          <div class="dialog" role="dialog" aria-labelledby="overlay-title">
+            <h2 id="overlay-title" class="headline-small">준비되셨나요?</h2>
+            <p id="overlay-text" class="body-medium">가로줄을 채워 점수를 얻으세요</p>
+            <button id="start-btn" class="btn-filled" type="button">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              <span id="start-label">시작하기</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <section class="card card-primary score-card">
+        <div class="score-main">
+          <h2 class="label-medium">점수</h2>
+          <p id="score" class="display-small">0</p>
+        </div>
+        <div class="stat-row">
+          <div class="stat">
+            <span class="label-small">줄</span>
+            <span id="lines" class="title-medium">0</span>
+          </div>
+          <div class="stat">
+            <span class="label-small">레벨</span>
+            <span id="level" class="title-medium">1</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card next-card">
+        <h2 class="label-medium">다음 블록</h2>
+        <canvas id="next" width="120" height="96"></canvas>
+      </section>
+
+      <section class="card keys-card">
+        <h2 class="label-medium">조작법</h2>
+        <ul class="key-list body-medium">
+          <li><span class="keys"><kbd>←</kbd><kbd>→</kbd></span> 이동</li>
+          <li><span class="keys"><kbd>↓</kbd></span> 빠르게 내리기</li>
+          <li><span class="keys"><kbd>↑</kbd><kbd>X</kbd></span> 회전</li>
+          <li><span class="keys"><kbd>Space</kbd></span> 바로 떨어뜨리기</li>
+          <li><span class="keys"><kbd>P</kbd></span> 일시정지</li>
+          <li><span class="keys"><kbd>M</kbd></span> 배경음악</li>
+        </ul>
+      </section>
+    </aside>
+
+    <!-- 터치 기기용 조작 버튼 -->
+    <section class="touch-controls" aria-label="터치 조작">
+      <div class="pad">
+        <button class="ctrl-btn" type="button" data-action="left" data-repeat aria-label="왼쪽으로 이동">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <button class="ctrl-btn" type="button" data-action="down" data-repeat aria-label="빠르게 내리기">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        </button>
+        <button class="ctrl-btn" type="button" data-action="right" data-repeat aria-label="오른쪽으로 이동">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59 10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+        </button>
+      </div>
+      <div class="pad">
+        <button class="ctrl-btn ctrl-secondary" type="button" data-action="drop" aria-label="바로 떨어뜨리기">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6.41 16.59 5 12 9.58 7.41 5 6 6.41l6 6z"/><path d="m18 13-1.41-1.41L12 16.17l-4.59-4.58L6 13l6 6z"/></svg>
+        </button>
+        <button class="ctrl-btn ctrl-primary" type="button" data-action="rotate" aria-label="회전">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script src="music.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
