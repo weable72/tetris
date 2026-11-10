@@ -1,20 +1,10 @@
 (() => {
   'use strict';
 
-  const COLS = 10;
-  const ROWS = 20;
+  const Core = window.TetrisCore;
+  const { COLS, ROWS, SHAPES, createBoard, createPiece } = Core;
   const BLOCK = 30;
   const NEXT_BLOCK = 24;
-
-  const SHAPES = {
-    I: [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
-    O: [[1, 1], [1, 1]],
-    T: [[0, 1, 0], [1, 1, 1], [0, 0, 0]],
-    S: [[0, 1, 1], [1, 1, 0], [0, 0, 0]],
-    Z: [[1, 1, 0], [0, 1, 1], [0, 0, 0]],
-    J: [[1, 0, 0], [1, 1, 1], [0, 0, 0]],
-    L: [[0, 0, 1], [1, 1, 1], [0, 0, 0]],
-  };
 
   const COLORS = {
     I: '#26c6da',
@@ -25,8 +15,6 @@
     J: '#42a5f5',
     L: '#ffa726',
   };
-
-  const LINE_SCORES = [0, 100, 300, 500, 800];
 
   const boardCanvas = document.getElementById('board');
   const ctx = boardCanvas.getContext('2d');
@@ -58,53 +46,18 @@
   let paused = false;
   let rafId = null;
 
-  function createBoard() {
-    return Array.from({ length: ROWS }, () => Array(COLS).fill(null));
-  }
-
   function randomType() {
     const types = Object.keys(SHAPES);
     return types[Math.floor(Math.random() * types.length)];
   }
 
-  function createPiece(type) {
-    const matrix = SHAPES[type].map(row => row.slice());
-    return {
-      type,
-      matrix,
-      x: Math.floor((COLS - matrix[0].length) / 2),
-      y: type === 'I' ? -1 : 0,
-    };
-  }
-
+  // 현재 보드를 기준으로 TetrisCore의 순수 함수를 호출하는 래퍼
   function collide(p, offsetX = 0, offsetY = 0, matrix = p.matrix) {
-    for (let r = 0; r < matrix.length; r++) {
-      for (let c = 0; c < matrix[r].length; c++) {
-        if (!matrix[r][c]) continue;
-        const x = p.x + c + offsetX;
-        const y = p.y + r + offsetY;
-        if (x < 0 || x >= COLS || y >= ROWS) return true;
-        if (y >= 0 && board[y][x]) return true;
-      }
-    }
-    return false;
-  }
-
-  function rotateMatrix(matrix) {
-    const n = matrix.length;
-    return matrix.map((row, r) => row.map((_, c) => matrix[n - 1 - c][r]));
+    return Core.collide(board, p, offsetX, offsetY, matrix);
   }
 
   function rotate() {
-    if (piece.type === 'O') return;
-    const rotated = rotateMatrix(piece.matrix);
-    for (const kick of [0, -1, 1, -2, 2]) {
-      if (!collide(piece, kick, 0, rotated)) {
-        piece.matrix = rotated;
-        piece.x += kick;
-        return;
-      }
-    }
+    piece = Core.tryRotate(board, piece);
   }
 
   function merge() {
@@ -118,20 +71,13 @@
   }
 
   function clearLines() {
-    let cleared = 0;
-    for (let r = ROWS - 1; r >= 0; r--) {
-      if (board[r].every(cell => cell)) {
-        board.splice(r, 1);
-        board.unshift(Array(COLS).fill(null));
-        cleared++;
-        r++; // 같은 줄을 다시 검사
-      }
-    }
-    if (cleared) {
-      score += LINE_SCORES[cleared] * level;
-      lines += cleared;
-      level = Math.floor(lines / 10) + 1;
-      dropInterval = Math.max(100, 1000 - (level - 1) * 100);
+    const result = Core.clearLines(board);
+    board = result.board;
+    if (result.cleared) {
+      score += Core.lineScore(result.cleared, level);
+      lines += result.cleared;
+      level = Core.levelFor(lines);
+      dropInterval = Core.dropIntervalFor(level);
       Music.setLevel(level);
     }
   }
@@ -352,7 +298,7 @@
     score = 0;
     lines = 0;
     level = 1;
-    dropInterval = 1000;
+    dropInterval = Core.dropIntervalFor(level);
     dropCounter = 0;
     lastTime = 0;
     nextPiece = createPiece(randomType());

@@ -1,2 +1,4 @@
 WORKFLOW.md
 PLAN.md
+node_modules/
+coverage/

@@ -13,6 +13,8 @@ HTML/CSS/JavaScript만 사용하며, 설치하거나 빌드할 것이 없습니�
 | `style.css` | Material Design 3 스타일 (랜딩·게임 공용, 반응형) |
 | `game.js` | 게임 로직 |
 | `music.js` | 배경음악 (러시아 민요 "코로베이니키", Web Audio API 합성) |
+| `tetris-core.js` | 화면과 무관한 순수 게임 로직 (충돌, 회전, 줄 삭제, 점수·레벨 계산) |
+| `tests/` | Jest 테스트 |
 
 > 글꼴(Roboto)은 Google Fonts에서 불러옵니다. 인터넷에 연결되어 있지 않으면 시스템 기본 글꼴로 표시되며, 게임은 그대로 동작합니다.
 
@@ -96,3 +98,18 @@ http://localhost:8000/game.html  # 게임 화면 바로 열기
 
 - 한 번에 지운 줄 수: 1줄 100점, 2줄 300점, 3줄 500점, 4줄 800점 (× 현재 레벨)
 - 10줄을 지울 때마다 레벨이 오르고 블록이 더 빨리 떨어집니다.
+
+## 테스트 (개발용)
+
+게임 실행에는 필요 없고, 개발할 때만 사용합니다. Node.js가 필요합니다(설치 방법은 `JEST.md` 참고).
+
+```bash
+npm install            # 처음 한 번
+npm test               # 전체 테스트 실행
+npm run test:watch     # 저장할 때마다 자동 실행
+npm run test:coverage  # 커버리지 보고서
+```
+
+- `tests/tetris-core.test.js`: 충돌, 회전, 줄 삭제, 점수·레벨 유닛 테스트
+- `tests/game.dom.test.js`: jsdom에서 `game.html`을 띄워 시작 → 일시정지 → 계속하기 흐름 확인
+- GitHub에 push하면 GitHub Actions(`.github/workflows/test.yml`)가 테스트를 자동으로 실행합니다.

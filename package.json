@@ -1,0 +1,28 @@
+{
+  "name": "tetris",
+  "version": "1.0.0",
+  "description": "브라우저에서 바로 실행되는 간단한 블록 낙하 퍼즐 게임(MVP)입니다. HTML/CSS/JavaScript만 사용하며, 설치하거나 빌드할 것이 없습니다. 화면은 Material Design 3 스타일이고(시스템 설정에 따라 라이트/다크 테마 자동 전환), 배경음악은 Web Audio API로 직접 합성해 재생합니다.",
+  "main": "game.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weable72/tetris.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/weable72/tetris/issues"
+  },
+  "homepage": "https://github.com/weable72/tetris#readme",
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "jest-canvas-mock": "^2.5.8",
+    "jest-environment-jsdom": "^30.5.2"
+  }
+}
